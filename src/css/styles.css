@@ -1,0 +1,197 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  /* Strawberry lemonade gradient: soft pink to warm yellow */
+  background: linear-gradient(135deg, #ffadc6 0%, #ffe066 100%);
+  color: #4a4a4a;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.app-container {
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  background: rgba(255, 255, 255, 0.85); /* slightly frosted white to separate content from bg */
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(255, 165, 178, 0.3); /* subtle pink glow shadow */
+  max-width: 1200px;
+  margin: 1rem auto;
+}
+
+.app-title {
+  font-size: 2.5rem;
+  margin-bottom: 2rem;
+  color: #d94f6e; /* rich strawberry pink */
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  user-select: none;
+}
+
+.controls button {
+  background-color: #ffb347; /* lemonade yellow */
+  color: white;
+  padding: 0.5rem 1.2rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: background-color 0.2s ease;
+}
+
+.controls button:hover {
+  background-color: #ffcf69; /* lighter lemonade */
+}
+
+.board {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: flex-start;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  width: 100%;
+  padding-bottom: 1rem;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: #ffadc6 transparent; /* pink scrollbar */
+}
+
+.board::-webkit-scrollbar-thumb {
+  background-color: #ffadc6;
+}
+
+.column {
+  flex: 0 0 272px;
+  background-color: #fff0f6; /* very light pink */
+  padding: 0.75rem;
+  border-radius: 10px;
+  box-shadow: 0 1px 6px rgba(255, 165, 178, 0.4); /* pink glow */
+  display: flex;
+  flex-direction: column;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.column-title {
+  font-size: 1.1rem;
+  margin-bottom: 0.75rem;
+  color: #d94f6e;
+  font-weight: 700;
+  user-select: none;
+  padding-bottom: 0.3rem;
+  border-bottom: 2px solid #ffd966;
+}
+
+.task {
+  background-color: #fff7e6; /* pale lemonade */
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  margin-bottom: 0.75rem;
+  box-shadow: 0 1px 4px rgba(255, 196, 79, 0.3);
+  cursor: grab;
+  user-select: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background-color 0.15s ease;
+  color: #6b4a3b; /* warm brownish text */
+}
+
+.task:hover {
+  background-color: #ffeabf;
+}
+
+.task.done {
+  background-color: #fff3b0;
+  color: #8a6d2f;
+  text-decoration: line-through;
+  box-shadow: none;
+}
+
+.task button {
+  background: none;
+  border: none;
+  color: #d94f6e;
+  font-size: 1.1rem;
+  cursor: pointer;
+  padding: 0;
+  user-select: none;
+}
+
+.task button:hover {
+  color: #ff5370;
+}
+/* Buttons inside controls, tasks, and anywhere */
+button {
+  background-color: #ffb347; /* lemonade yellow */
+  color: white;
+  padding: 0.5rem 1.2rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  user-select: none;
+  box-shadow: 0 2px 6px rgba(255, 179, 71, 0.5);
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+button:hover,
+button:focus {
+  background-color: #ffcf69; /* lighter lemonade */
+  box-shadow: 0 3px 8px rgba(255, 207, 105, 0.7);
+  outline: none;
+}
+
+/* Text inputs and selects anywhere in app */
+input[type="text"],
+select {
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  border: 1.5px solid #ffadc6; /* soft pink border */
+  background: #fff7e6; /* pale lemonade background */
+  color: #6b4a3b; /* warm brownish text */
+  font-size: 1rem;
+  font-weight: 500;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  outline-offset: 2px;
+  outline-color: transparent;
+  user-select: text;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  box-sizing: border-box;
+}
+
+input[type="text"]:focus,
+select:focus {
+  border-color: #d94f6e; /* rich strawberry pink */
+  box-shadow: 0 0 8px #d94f6e88;
+  outline-color: #d94f6e88;
+}
+
+/* Optional: spacing for inputs and selects */
+input[type="text"],
+select {
+  margin-right: 10px;
+  margin-bottom: 6px;
+  min-width: 150px;
+}
+
+/* Make selects inside task assign dropdown full width */
+select.assign-dropdown {
+  width: 100%;
+  margin-top: 6px;
+  margin-bottom: 6px;
+}
+/* Placeholder text style */
+input::placeholder {
+  color: #d94f6e; /* rich strawberry pink */
+  font-weight: 500;
+  opacity: 0.7;
+  font-style: italic;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
