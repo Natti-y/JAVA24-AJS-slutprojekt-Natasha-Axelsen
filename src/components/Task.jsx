@@ -21,11 +21,11 @@ function Task({ task, members, assignTask, markAsFinished, deleteTask, status })
             <em>Created:</em> {task.timestamp}
           </div>
           <div>
-            <em>Category:</em> {task.category}
+            <em>Category:</em> {task.category || "Unknown"}
           </div>
           {assignedMember && (
             <div>
-              <em>Assigned to:</em> {assignedMember.name} ({assignedMember.role})
+              <em>Assigned to:</em> {assignedMember.name} ({assignedMember.category})
             </div>
           )}
         </div>
@@ -41,13 +41,17 @@ function Task({ task, members, assignTask, markAsFinished, deleteTask, status })
             <option value="" disabled>
               Assign to...
             </option>
-            {members
-              .filter((m) => m.role.toLowerCase() === task.category.toLowerCase())
-              .map((m) => (
-                <option key={m.id} value={m.id}>
-                  {m.name} ({m.role})
-                </option>
-              ))}
+            {task.category &&
+              members
+                .filter(
+                  (m) =>
+                    (m.category?.toLowerCase() || "") === (task.category?.toLowerCase() || "")
+                )
+                .map((m) => (
+                  <option key={m.id} value={m.id}>
+                    {m.name} ({m.category})
+                  </option>
+                ))}
           </select>
         )}
 

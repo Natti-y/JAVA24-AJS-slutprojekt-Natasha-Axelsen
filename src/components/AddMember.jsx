@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 
-function AddMember({ roles, onAddMember }) {
+function AddMember({ categories, onAddMember }) {
   const [name, setName] = useState("");
-  const [role, setRole] = useState(roles[0]);
+  const [category, setCategory] = useState(categories[0]);
 
   const handleAdd = () => {
-    onAddMember(name, role);
+    onAddMember(name, category);
     setName("");
-    setRole(roles[0]);
+    setCategory(categories[0]);
   };
 
   return (
@@ -27,20 +27,20 @@ function AddMember({ roles, onAddMember }) {
         style={{ marginRight: 10 }}
       />
       <label
-        htmlFor="memberRoleSelect"
+        htmlFor="memberCategorySelect"
         style={{ color: "#d94f6e", fontWeight: 600, marginRight: 8, userSelect: "none" }}
       >
-        Role:
+        Category:
       </label>
       <select
-        id="memberRoleSelect"
-        value={role}
-        onChange={(e) => setRole(e.target.value)}
+        id="memberCategorySelect"
+        value={category}
+        onChange={(e) => setCategory(e.target.value)}
         style={{ marginRight: 10 }}
       >
-        {roles.map((r) => (
-          <option key={r} value={r}>
-            {r}
+        {categories.map((c) => (
+          <option key={c} value={c}>
+            {c}
           </option>
         ))}
       </select>

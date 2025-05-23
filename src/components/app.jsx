@@ -5,7 +5,7 @@ import AddTask from "./AddTask";
 import Board from "./Board";
 import TaskFilters from "./TaskFilters";
 
-export const ROLES = ["UX", "Frontend", "Backend"];
+export const CATEGORIES = ["UX", "Frontend", "Backend"];
 
 function App() {
   const [members, setMembers] = useState([]);
@@ -40,11 +40,12 @@ function App() {
     });
   }, []);
 
-  const addMember = (name, role) => {
+  // Use category as parameter and property here
+  const addMember = (name, category) => {
     if (!name.trim()) return;
     const newMember = {
       name: name.trim(),
-      category: role,
+      category: category,
     };
     push(ref(db, "members"), newMember);
   };
@@ -64,6 +65,7 @@ function App() {
   const assignTask = (taskId, memberId) => {
     const member = members.find((m) => m.id === memberId);
     const task = tasks.find((t) => t.id === taskId);
+
     if (
       task &&
       task.status === "new" &&
@@ -125,8 +127,8 @@ function App() {
     <div className="app-container" style={{ maxWidth: 960, margin: "auto", padding: 20 }}>
       <h1 className="app-title">Strawberry Lemonade Trello</h1>
 
-      <AddMember roles={ROLES} onAddMember={addMember} />
-      <AddTask roles={ROLES} onAddTask={addTask} />
+      <AddMember categories={CATEGORIES} onAddMember={addMember} />
+      <AddTask categories={CATEGORIES} onAddTask={addTask} />
       <TaskFilters members={members} filters={filters} setFilters={setFilters} />
 
       <Board

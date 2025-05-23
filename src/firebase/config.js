@@ -16,6 +16,8 @@ const firebaseConfig = {
   storageBucket: "scrum-78aa5.firebasestorage.app",
   messagingSenderId: "851396906073",
   appId: "1:851396906073:web:f445984cb7ae985c99f548",
+
+  databaseURL: "https://scrum-78aa5-default-rtdb.europe-west1.firebasedatabase.app"
 };
 
 const app = initializeApp(firebaseConfig);

@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 
-function AddTask({ roles, onAddTask }) {
+function AddTask({ categories, onAddTask }) {
   const [content, setContent] = useState("");
-  const [category, setCategory] = useState(roles[0]);
+  const [category, setCategory] = useState(categories[0]);
 
   const handleAdd = () => {
     onAddTask(content, category);
     setContent("");
-    setCategory(roles[0]);
+    setCategory(categories[0]);
   };
 
   return (
@@ -38,9 +38,9 @@ function AddTask({ roles, onAddTask }) {
         onChange={(e) => setCategory(e.target.value)}
         style={{ marginRight: 10 }}
       >
-        {roles.map((r) => (
-          <option key={r} value={r}>
-            {r}
+        {categories.map((c) => (
+          <option key={c} value={c}>
+            {c}
           </option>
         ))}
       </select>
