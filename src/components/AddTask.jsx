@@ -1,13 +1,16 @@
 import React, { useState } from "react";
 
 function AddTask({ categories, onAddTask }) {
-  const [content, setContent] = useState("");
-  const [category, setCategory] = useState(categories[0]);
+  // State för uppgiftens text
+  const [content, setContent] = useState("");   
+  // State för vald kategori        
+  const [category, setCategory] = useState(categories[0]); 
 
   const handleAdd = () => {
-    onAddTask(content, category);
-    setContent("");
-    setCategory(categories[0]);
+    if (!content.trim()) return;  // Förhindra tom
+    onAddTask(content, category);  
+    setContent("");                
+    setCategory(categories[0]);    
   };
 
   return (

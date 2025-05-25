@@ -1,7 +1,48 @@
-import React from "react";
+import React, { useState } from "react";
 
 function Task({ task, members, assignTask, markAsFinished, deleteTask, status }) {
+  const [error, setError] = useState("");
   const assignedMember = members.find((m) => m.id === task.assignedTo);
+
+  const handleAssign = (memberId) => {
+    setError(""); // clear previous errors
+
+    const member = members.find((m) => m.id === memberId);
+    if (!member) {
+      setError("Selected member not found.");
+      return;
+    }
+    if ((member.category?.toLowerCase() || "") !== (task.category?.toLowerCase() || "")) {
+      setError("Member category does not match task category.");
+      return;
+    }
+
+    try {
+      assignTask(task.id, memberId);
+    } catch {
+      setError("Failed to assign task.");
+    }
+  };
+
+  // Handle marking task as finished with error handling
+  const handleMarkFinished = () => {
+    setError("");
+    try {
+      markAsFinished(task.id);
+    } catch {
+      setError("Failed to mark task as finished.");
+    }
+  };
+
+  // Handle deleting task with error handling
+  const handleDelete = () => {
+    setError("");
+    try {
+      deleteTask(task.id);
+    } catch {
+      setError("Failed to delete task.");
+    }
+  };
 
   return (
     <div
@@ -33,34 +74,55 @@ function Task({ task, members, assignTask, markAsFinished, deleteTask, status })
 
       <div style={{ marginLeft: 10, display: "flex", flexDirection: "column", gap: 6 }}>
         {status === "new" && (
-          <select
-            onChange={(e) => assignTask(task.id, e.target.value)}
-            defaultValue=""
-            aria-label={`Assign task ${task.content}`}
-          >
-            <option value="" disabled>
-              Assign to...
-            </option>
-            {task.category &&
-              members
-                .filter(
-                  (m) =>
-                    (m.category?.toLowerCase() || "") === (task.category?.toLowerCase() || "")
-                )
-                .map((m) => (
-                  <option key={m.id} value={m.id}>
-                    {m.name} ({m.category})
-                  </option>
-                ))}
-          </select>
+          <>
+            <select
+              onChange={(e) => handleAssign(e.target.value)}
+              defaultValue=""
+              aria-label={`Assign task ${task.content}`}
+            >
+              <option value="" disabled>
+                Assign to...
+              </option>
+              {task.category &&
+                members
+                  .filter(
+                    (m) =>
+                      (m.category?.toLowerCase() || "") === (task.category?.toLowerCase() || "")
+                  )
+                  .map((m) => (
+                    <option key={m.id} value={m.id}>
+                      {m.name} ({m.category})
+                    </option>
+                  ))}
+            </select>
+            {error && (
+              <p style={{ color: "red", marginTop: 4, fontSize: 12 }}>
+                {error}
+              </p>
+            )}
+          </>
         )}
 
         {status === "in progress" && (
-          <button onClick={() => markAsFinished(task.id)}>Mark as Finished</button>
+          <>
+            <button onClick={handleMarkFinished}>Mark as Finished</button>
+            {error && (
+              <p style={{ color: "red", marginTop: 4, fontSize: 12 }}>
+                {error}
+              </p>
+            )}
+          </>
         )}
 
         {status === "finished" && (
-          <button onClick={() => deleteTask(task.id)}>Delete</button>
+          <>
+            <button onClick={handleDelete}>Delete</button>
+            {error && (
+              <p style={{ color: "red", marginTop: 4, fontSize: 12 }}>
+                {error}
+              </p>
+            )}
+          </>
         )}
       </div>
     </div>

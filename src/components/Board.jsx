@@ -1,4 +1,3 @@
-import React from "react";
 import TaskColumn from "./Taskcolumn";
 
 function Board({ tasksByStatus, members, assignTask, markAsFinished, deleteTask }) {

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Task from "./task";
 
 const statusColors = {
@@ -8,6 +8,8 @@ const statusColors = {
 };
 
 function TaskColumn({ status, tasks, members, assignTask, markAsFinished, deleteTask }) {
+  const [error, setError] = useState("");
+
   return (
     <div
       className="column"
@@ -20,12 +22,12 @@ function TaskColumn({ status, tasks, members, assignTask, markAsFinished, delete
         flexShrink: 0,
       }}
     >
-      <h2
-        className="column-title"
-        style={{ textTransform: "capitalize", marginBottom: 15 }}
-      >
+      <h2 className="column-title" style={{ textTransform: "capitalize", marginBottom: 15 }}>
         {status}
       </h2>
+
+      {/* Display error message */}
+      {error && <p style={{ color: "red", fontWeight: "bold" }}>{error}</p>}
 
       {tasks.length === 0 && <p style={{ fontStyle: "italic" }}>No tasks</p>}
 
@@ -38,6 +40,7 @@ function TaskColumn({ status, tasks, members, assignTask, markAsFinished, delete
           markAsFinished={markAsFinished}
           deleteTask={deleteTask}
           status={status}
+          setError={setError} // pass error setter
         />
       ))}
     </div>

@@ -1,5 +1,5 @@
 import { db, ref, push, onValue, update, remove } from "../firebase/config";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import AddMember from "./AddMember";
 import AddTask from "./AddTask";
 import Board from "./Board";
@@ -8,6 +8,7 @@ import TaskFilters from "./TaskFilters";
 export const CATEGORIES = ["UX", "Frontend", "Backend"];
 
 function App() {
+  // State för medlemmar, uppgifter & filter
   const [members, setMembers] = useState([]);
   const [tasks, setTasks] = useState([]);
   const [filters, setFilters] = useState({
@@ -16,6 +17,19 @@ function App() {
     sortBy: "timestampDesc",
   });
 
+  const [error, setError] = useState("");
+  const errorTimeoutRef = useRef(null);
+
+  // Clear error after 5 seconds automatically
+  const showError = (msg) => {
+    setError(msg);
+    if (errorTimeoutRef.current) clearTimeout(errorTimeoutRef.current);
+    errorTimeoutRef.current = setTimeout(() => {
+      setError("");
+    }, 5000);
+  };
+
+  // Hämta medlemmar från databasen när komponenten laddas
   useEffect(() => {
     const membersRef = ref(db, "members");
     onValue(membersRef, (snapshot) => {
@@ -28,6 +42,7 @@ function App() {
     });
   }, []);
 
+  // Hämta uppgifter från databasen -//-
   useEffect(() => {
     const tasksRef = ref(db, "assignments");
     onValue(tasksRef, (snapshot) => {
@@ -40,18 +55,27 @@ function App() {
     });
   }, []);
 
-  // Use category as parameter and property here
+  // Lägg till medlem i databasen
   const addMember = (name, category) => {
-    if (!name.trim()) return;
+    if (!name.trim()) {
+      showError("Member name cannot be empty.");
+      return;
+    }
     const newMember = {
       name: name.trim(),
       category: category,
     };
-    push(ref(db, "members"), newMember);
+    push(ref(db, "members"), newMember).catch(() =>
+      showError("Failed to add member.")
+    );
   };
 
+  // Lägg till uppgift i databasen
   const addTask = (content, category) => {
-    if (!content.trim()) return;
+    if (!content.trim()) {
+      showError("Task content cannot be empty.");
+      return;
+    }
     const newTask = {
       content: content.trim(),
       category,
@@ -59,36 +83,57 @@ function App() {
       status: "new",
       assignedTo: null,
     };
-    push(ref(db, "assignments"), newTask);
+    push(ref(db, "assignments"), newTask).catch(() =>
+      showError("Failed to add task.")
+    );
   };
 
+  // Tilldelar en uppgift till en medlem OM kategorierna matchar
   const assignTask = (taskId, memberId) => {
+    setError(""); // Clear previous errors
+
     const member = members.find((m) => m.id === memberId);
     const task = tasks.find((t) => t.id === taskId);
 
-    if (
-      task &&
-      task.status === "new" &&
-      member &&
-      member.category.toLowerCase() === task.category.toLowerCase()
-    ) {
-      update(ref(db, `assignments/${taskId}`), {
-        assignedTo: memberId,
-        status: "in progress",
-      });
+    if (!task || !member) {
+      showError("Task or member not found.");
+      return;
     }
+    if (task.status !== "new") {
+      showError("Task is not new and cannot be assigned.");
+      return;
+    }
+    if (
+      (member.category?.toLowerCase() || "") !==
+      (task.category?.toLowerCase() || "")
+    ) {
+      showError("Member category does not match task category.");
+      return;
+    }
+
+    update(ref(db, `assignments/${taskId}`), {
+      assignedTo: memberId,
+      status: "in progress",
+    }).catch(() => showError("Failed to assign task."));
   };
 
+  // Markera uppgift som klar
   const markAsFinished = (taskId) => {
+    setError("");
     update(ref(db, `assignments/${taskId}`), {
       status: "finished",
-    });
+    }).catch(() => showError("Failed to mark task as finished."));
   };
 
+  // Ta bort uppgift
   const deleteTask = (taskId) => {
-    remove(ref(db, `assignments/${taskId}`));
+    setError("");
+    remove(ref(db, `assignments/${taskId}`)).catch(() =>
+      showError("Failed to delete task.")
+    );
   };
 
+  // Filtrerar och sorterar
   function getFilteredAndSortedTasks(tasks, filters) {
     let result = [...tasks];
 
@@ -117,18 +162,40 @@ function App() {
 
   const filteredTasks = getFilteredAndSortedTasks(tasks, filters);
 
+  // i kolumner baserat på status
   const tasksByStatus = {
     new: filteredTasks.filter((t) => t.status === "new"),
     "in progress": filteredTasks.filter((t) => t.status === "in progress"),
     finished: filteredTasks.filter((t) => t.status === "finished"),
   };
 
+  // Renderar huvudlook- för appen
   return (
-    <div className="app-container" style={{ maxWidth: 960, margin: "auto", padding: 20 }}>
+    <div
+      className="app-container"
+      style={{ maxWidth: 960, margin: "auto", padding: 20 }}
+    >
       <h1 className="app-title">Strawberry Lemonade Trello</h1>
+
+      {/* Visa felmeddelanden */}
+      {error && (
+        <div
+          role="alert"
+          style={{
+            color: "white",
+            backgroundColor: "#d94f6e",
+            padding: 12,
+            borderRadius: 6,
+            marginBottom: 20,
+          }}
+        >
+          <strong>Error:</strong> {error}
+        </div>
+      )}
 
       <AddMember categories={CATEGORIES} onAddMember={addMember} />
       <AddTask categories={CATEGORIES} onAddTask={addTask} />
+
       <TaskFilters members={members} filters={filters} setFilters={setFilters} />
 
       <Board

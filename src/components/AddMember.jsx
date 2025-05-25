@@ -5,10 +5,12 @@ function AddMember({ categories, onAddMember }) {
   const [category, setCategory] = useState(categories[0]);
 
   const handleAdd = () => {
-    onAddMember(name, category);
-    setName("");
-    setCategory(categories[0]);
-  };
+  if (!name.trim()) return; // Förhindra tom string
+  onAddMember(name, category);
+  setName("");
+  setCategory(categories[0]); // Återställ kategori till första alternativet
+};
+
 
   return (
     <div style={{ marginBottom: 20 }}>
